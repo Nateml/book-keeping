@@ -1,19 +1,25 @@
 from flask import Flask
 from flask import jsonify
+from json import load, dump
 
 app = Flask(__name__)
 
-books = {}
+MOCK_DATA_PATH = "../data.json"
+
+def overwrite_json_file(json_data, out_file):
+    with open(out_file, "w") as f:
+        dump(json_data, f, indent=4)
 
 @app.route('/inventory/quantity/<string:isbn>')
 def get_quantity(isbn):
     """
     Returns the quantity of a book with the given isbn.
     """
+    books = load(open(MOCK_DATA_PATH))
     try:
         return jsonify({
             'isbn' : isbn,
-            'quantity' : books[isbn]
+            'quantity' : books["inventory"][isbn]
         }),200 # simple enough
     except Exception as e:
         print(e)
@@ -26,11 +32,14 @@ def remove_book(isbn, quantity):
     """
     Removes x copies of a book from the inventory.
     """
+    books = load(open(MOCK_DATA_PATH))
     try:
-        if isbn in books and books[isbn] >= quantity: # check if book actually exists in the inventory, and that there are enough copies of the book to remove
-            books[isbn] -= quantity
+        if isbn in books["inventory"] and books["inventory"][isbn] >= quantity: # check if book actually exists in the inventory, and that there are enough copies of the book to remove
+            books["inventory"][isbn] -= quantity
         else:
             raise Exception
+
+        overwrite_json_file(books, MOCK_DATA_PATH)
 
         return jsonify({
             'message': f'removed {quantity} copies of book with isbn {isbn} from the system'
@@ -46,10 +55,13 @@ def add_book(isbn, quantity):
     """
     Adds x copies of a book to the inventory.
     """
+    books = load(open(MOCK_DATA_PATH))
     try:
-        if not isbn in books: # if the book does not exist in the inventory, add it
-            books[isbn] = 0
-        books[isbn] += quantity
+        if not isbn in books["inventory"]: # if the book does not exist in the inventory, add it
+            books["inventory"][isbn] = 0
+        books["inventory"][isbn] += quantity
+
+        overwrite_json_file(books, MOCK_DATA_PATH)
 
         return jsonify({
             'message': f'added {quantity} copies of book with isbn {isbn} to the system'
@@ -62,8 +74,10 @@ def add_book(isbn, quantity):
 
 @app.route('/inventory/set/<string:isbn>/<int:quantity>')
 def set_quantity(isbn, quantity):
+    books = load(open(MOCK_DATA_PATH))
     try:
-        books[isbn] = quantity
+        books["inventory"][isbn] = quantity
+        overwrite_json_file(books, MOCK_DATA_PATH)
         return jsonify({
             'message': f'set quantity of book with isbn {isbn} to {quantity}'
             })

@@ -1,0 +1,20 @@
+{
+    "catalog": {
+        "123": {
+            "isbn": "123",
+            "title": "Newly Named Book",
+            "author": "New Author",
+            "date_published": "12 BC"
+        },
+        "512": {
+            "isbn": 512,
+            "title": "How to Write a Real Book",
+            "author": "Jane Doe",
+            "date_published": "01022000"
+        }
+    },
+    "inventory": {
+        "123": 4,
+        "512": 26
+    }
+}
