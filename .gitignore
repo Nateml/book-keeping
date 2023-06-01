@@ -1,3 +1,6 @@
+# virtual environments
+venv
+
+# pytest files
 *.pytest_cache
 __pycache__
-venv
