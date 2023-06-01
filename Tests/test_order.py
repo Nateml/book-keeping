@@ -11,7 +11,6 @@ from flask.testing import FlaskClient
 
 data_file_path = os.getcwd() + "\\data.json"
 
-
 @pytest.fixture
 def client():
     app.config['TESTING'] = True

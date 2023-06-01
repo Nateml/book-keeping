@@ -6,8 +6,6 @@ import os
 
 app = Flask(__name__)
 
-#MOCK_DATA_PATH = "../data.json"
-#MOCK_DATA_PATH = os.getcwd() + "\\data.json"
 MOCK_DATA_PATH = os.path.dirname(os.path.dirname(os.path.realpath(__file__))) + "\\data.json"
 
 def overwrite_json_file(json_data, out_file):
