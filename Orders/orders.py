@@ -1,12 +1,11 @@
 from flask import Flask
 from flask import jsonify
-import requests
 from json import load, dump
 import os
 
 app = Flask(__name__)
 
-MOCK_DATA_PATH = os.getcwd() + "\\data.json"
+MOCK_DATA_PATH = os.path.dirname(os.path.dirname(os.path.realpath(__file__))) + "\\data.json"
 
 def overwrite_json_file(json_data, out_file):
     with open(out_file, "w") as f:
@@ -24,6 +23,12 @@ def order(isbn, quantity, date):
     This means the book inventory should reflect that there are x less copies of the book available after the order.
     """
     try:
+        # input validation
+        if not isinstance(isbn, str) or not isinstance(quantity, int) or not isinstance(date, str):
+            return jsonify({
+                'message': 'Invalid request'
+            }),400
+
         books = load(open(MOCK_DATA_PATH))
 
         # adjust inventory:
@@ -40,7 +45,6 @@ def order(isbn, quantity, date):
         return jsonify({
                 'message' : 'Invalid request'
                 }),400
-
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=3003)

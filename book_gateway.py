@@ -23,7 +23,6 @@ BOOK_ORDER_SERVICE = "http://localhost:3003"
 
 
 def proxy_request(service_url):
-    print(request.path)
     resp = requests.request(
         method=request.method,
         url=f"{service_url}{request.path}",

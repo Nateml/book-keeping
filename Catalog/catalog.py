@@ -17,8 +17,6 @@ def add_book():
     """ 
     Adds a new book to the system. 
     The post request should contain information about the book (isbn, title, author, date published, quantity). 
-    Should we set the quantity of the book here or should we let the user make a seperate request to the book
-        inventory microservice to set the quantity?
     """
 
     books = load(open(MOCK_DATA_PATH))
@@ -27,11 +25,16 @@ def add_book():
         if not request.is_json: # check if the post request body is in json format
             return jsonify({
                 'message': 'Content type of request must be set to application/json'
-                })
+                }),415
         
 
         # add book:
         data = request.json
+
+        # validate input
+        if not isinstance(data.get('isbn'), str) or not isinstance(data.get('title'), str) or not isinstance(data.get('author'), str) or not isinstance(data.get('date_published'), str) or not isinstance(data.get('quantity'), int):
+            raise Exception
+
         book = {
                 data.get('isbn') :
                     {
@@ -66,6 +69,12 @@ def book(isbn):
     Either returns the information of the book with the given isbn (in case of a GET request),
         or deletes the book from the system (in case of a DELETE request).
     """
+
+    # input validation
+    if not isinstance(isbn, str):
+        return jsonify({
+            'message': 'Invalid request'
+        }),400
 
     books = load(open(MOCK_DATA_PATH))
 
@@ -107,6 +116,10 @@ def book(isbn):
             old_book = books["catalog"][isbn]
 
             data = request.json
+
+            # input validation
+            if not isinstance(data.get('title'), str) or not isinstance(data.get('author'), str) or not isinstance(data.get('date_published'), str):
+                raise Exception
 
             book = {
                 'isbn' : isbn,
