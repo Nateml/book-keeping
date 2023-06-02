@@ -1,8 +1,8 @@
+from json import load, dump
+import os
 from flask import Flask
 from flask import request
 from flask import jsonify
-from json import load, dump
-import os
 
 app = Flask(__name__)
 
